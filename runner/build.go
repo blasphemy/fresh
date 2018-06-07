@@ -5,12 +5,17 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"runtime"
 )
 
 func build() (string, bool) {
 	buildLog("Building...")
 
 	cmd := exec.Command("go", "build", "-o", buildPath(), root())
+
+	if runtime.GOOS == "darwin" {
+		cmd = exec.Command("go", "build", "-ldflags=-s", "-o", buildPath(), root())
+	}
 
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
